@@ -20,12 +20,23 @@ type AuthTokenDTO {
   accessToken: String!
 }
 
+type MessageDTO {
+  id: Float!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  text: String!
+  user: UserDTO!
+}
+
 type Query {
   """get user"""
   user(id: Int!): UserDTO!
 
   """get users"""
   users: [UserDTO!]!
+
+  """get messages"""
+  messages: [MessageDTO!]!
 }
 
 type Mutation {
@@ -33,6 +44,7 @@ type Mutation {
   updateUser(user: UpdateUserInput!, id: Int!): UserDTO!
   removeUser(id: Int!): UserDTO!
   login(email: String!, password: String!): AuthTokenDTO!
+  createMessage(message: MessageInput!): MessageDTO!
 }
 
 input CreateUserInput {
@@ -46,4 +58,12 @@ input UpdateUserInput {
   email: String!
   firstName: String!
   lastName: String!
+}
+
+input MessageInput {
+  text: String!
+}
+
+type Subscription {
+  messageAdded: MessageDTO!
 }

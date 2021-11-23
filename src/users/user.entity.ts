@@ -1,10 +1,14 @@
-import { BeforeInsert, Column, Entity } from 'typeorm';
+import { BeforeInsert, Column, Entity, OneToMany } from 'typeorm';
 import { compare, hash } from 'bcrypt';
 
 import { BaseEntity } from 'common/entity/base.entity';
+import { MessageEntity } from 'message/message.entity';
 
 @Entity('users')
 export class UserEntity extends BaseEntity {
+  @OneToMany(() => MessageEntity, (message) => message.user)
+  messages: MessageEntity[];
+
   @Column({ unique: true })
   email: string;
 

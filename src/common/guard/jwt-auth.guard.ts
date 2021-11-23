@@ -10,7 +10,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const gContext = GqlExecutionContext.create(context).getContext();
-    const req = gContext.req || gContext.connection;
-    return super.canActivate(new ExecutionContextHost([req]));
+
+    const request = gContext.connection?.context || gContext.req;
+    return super.canActivate(new ExecutionContextHost([request]));
   }
 }

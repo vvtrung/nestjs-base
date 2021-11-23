@@ -6,6 +6,9 @@ import { AuthModule } from 'auth/auth.module';
 import { UserModule } from 'users/user.module';
 import { ConfigModule } from 'config/config.module';
 import { ConfigService } from 'config/config.service';
+import { MessageModule } from 'message/message.module';
+import { PubSubModule } from './pubsub/pubsub.module';
+import { formatError } from 'common/utils/error.util';
 
 @Module({
   imports: [
@@ -30,11 +33,14 @@ import { ConfigService } from 'config/config.service';
         autoSchemaFile: 'schema.gql',
         installSubscriptionHandlers: true,
         context: ({ req, res, connection }) => ({ req, res, connection }),
+        formatError: formatError,
       }),
     }),
     ConfigModule,
     UserModule,
     AuthModule,
+    MessageModule,
+    PubSubModule,
   ],
   controllers: [],
   providers: [],

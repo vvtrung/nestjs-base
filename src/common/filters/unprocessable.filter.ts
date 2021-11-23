@@ -1,11 +1,10 @@
 import {
-  ExecutionContext,
   Catch,
   ArgumentsHost,
   UnprocessableEntityException,
   ExceptionFilter,
+  HttpException,
 } from '@nestjs/common';
-import { GqlExecutionContext } from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { ValidationError } from 'class-validator';
 import { isEmpty } from 'lodash';
@@ -16,10 +15,10 @@ import { ErrorDTO } from '../dto/error.dto';
 export class UnprocessableExceptionFilter
   implements ExceptionFilter<UnprocessableEntityException>
 {
-  catch(exception: UnprocessableEntityException, host: ArgumentsHost): void {
-    const graphContext = GqlExecutionContext.create(
-      host as ExecutionContext,
-    ).getContext();
+  catch(exception: UnprocessableEntityException, _host: ArgumentsHost) {
+    // const graphContext = GqlExecutionContext.create(
+    //   host as ExecutionContext,
+    // ).getContext();
 
     const statusCode = exception.getStatus();
     const r = exception.getResponse() as { message: ValidationError[] };
@@ -27,7 +26,8 @@ export class UnprocessableExceptionFilter
     const validationErrors = r.message;
     const errros = this.validationFilter(validationErrors);
 
-    return graphContext.req.res.status(statusCode).json(errros);
+    // return graphContext.req.res.status(statusCode).json(errros);
+    return new HttpException(errros, statusCode);
   }
 
   private validationFilter(validationErrors: ValidationError[]): ErrorDTO[] {
