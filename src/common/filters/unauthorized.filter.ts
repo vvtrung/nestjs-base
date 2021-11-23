@@ -2,20 +2,20 @@ import {
   Catch,
   HttpStatus,
   ArgumentsHost,
-  ExecutionContext,
   UnauthorizedException,
+  HttpException,
 } from '@nestjs/common';
-import { GqlExceptionFilter, GqlExecutionContext } from '@nestjs/graphql';
+import { GqlExceptionFilter } from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 
 import { ErrorDTO } from '../dto/error.dto';
 
 @Catch(UnauthorizedException)
 export class UnauthorizedExceptionFilter implements GqlExceptionFilter {
-  catch(exception: UnauthorizedException, host: ArgumentsHost) {
-    const graphContext = GqlExecutionContext.create(
-      host as ExecutionContext,
-    ).getContext();
+  catch(exception: UnauthorizedException, _host: ArgumentsHost) {
+    // const graphContext = GqlExecutionContext.create(
+    //   host as ExecutionContext,
+    // ).getContext();
 
     const status = HttpStatus.UNAUTHORIZED;
 
@@ -23,6 +23,6 @@ export class UnauthorizedExceptionFilter implements GqlExceptionFilter {
       message: exception.message,
     });
 
-    return graphContext.req.res.status(status).json(error);
+    return new HttpException(error, status);
   }
 }
