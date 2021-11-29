@@ -1,8 +1,8 @@
-import { ObjectType, Field } from '@nestjs/graphql';
+import { Field, InterfaceType } from '@nestjs/graphql';
 import { Expose } from 'class-transformer';
 
-@ObjectType()
-export class BaseDTO {
+@InterfaceType()
+export abstract class BaseDTO {
   @Field()
   @Expose()
   readonly id: number;

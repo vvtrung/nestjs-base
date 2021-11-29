@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { MessageEntity } from 'message/message.entity';
 import { EntityNotFoundError, Repository } from 'typeorm';
 
 import { CreateUserInput, UpdateUserInput } from './dto';
@@ -10,6 +11,8 @@ export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private userRepo: Repository<UserEntity>,
+    @InjectRepository(MessageEntity)
+    private messageRepo: Repository<MessageEntity>,
   ) {}
 
   async findOne(id: number): Promise<UserEntity> {
@@ -22,6 +25,16 @@ export class UserService {
 
   async findAll(): Promise<UserEntity[]> {
     return this.userRepo.find();
+  }
+
+  async getLatestMessage(userId): Promise<MessageEntity> {
+    return this.messageRepo
+      .createQueryBuilder()
+      .where('MessageEntity.userId = :userId', { userId })
+      .orderBy({
+        createdAt: 'DESC',
+      })
+      .getOne();
   }
 
   async create(userInput: CreateUserInput): Promise<UserEntity> {

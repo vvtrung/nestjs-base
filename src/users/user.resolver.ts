@@ -1,13 +1,21 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { Int } from 'type-graphql';
 
 import { UserDTO, CreateUserInput, UpdateUserInput } from './dto';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from 'common/guard/jwt-auth.guard';
+import { MessageDTO } from 'message/dto/message.dto';
 
-@Resolver()
+@Resolver(UserDTO)
 @UseGuards(JwtAuthGuard)
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
@@ -24,6 +32,13 @@ export class UserResolver {
     const users = await this.userService.findAll();
 
     return plainToClass(UserDTO, users);
+  }
+
+  @ResolveField(() => MessageDTO, { nullable: true })
+  async latestMessage(@Parent() user: UserDTO): Promise<MessageDTO> {
+    const latest = await this.userService.getLatestMessage(user.id);
+
+    return plainToClass(MessageDTO, latest);
   }
 
   @Mutation(() => UserDTO)
