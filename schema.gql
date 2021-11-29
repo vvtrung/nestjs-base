@@ -9,6 +9,7 @@ type UserDTO {
   email: String!
   firstName: String
   lastName: String
+  latestMessage: MessageDTO
 }
 
 """
@@ -16,16 +17,16 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type AuthTokenDTO {
-  accessToken: String!
-}
-
 type MessageDTO {
   id: Float!
   updatedAt: DateTime!
   createdAt: DateTime!
   text: String!
   user: UserDTO!
+}
+
+type AuthTokenDTO {
+  accessToken: String!
 }
 
 type Query {
